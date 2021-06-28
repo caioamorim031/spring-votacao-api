@@ -2,6 +2,7 @@ package com.testedev.votacao.api.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.testedev.votacao.api.dtos.PautaDTO;
 import com.testedev.votacao.api.entities.PautaEntity;
+import com.testedev.votacao.api.exceptions.ValorParametroInvalidoException;
 import com.testedev.votacao.api.response.Response;
 import com.testedev.votacao.api.services.PautaService;
+import com.testedev.votacao.api.utils.BibliotecaUtil;
 
 @RestController
 @RequestMapping("api/pauta")
@@ -44,26 +47,28 @@ public class PautaController {
 		
 		Response<PautaDTO> response = new Response<PautaDTO>();
 		
-		if( pauta.getNome() != null && !pauta.getNome().equals("")) {
-			List<PautaDTO> listaDtos = new ArrayList();
-			
-			pautaService.consultarPauta(pauta.getNome()).forEach(pautaRetornada -> {
-				listaDtos.add(converterParaDTO(pautaRetornada));
-			});
-			response.setData(listaDtos);			
-		} else {
-			response.getErrors().add("Informe o nome da pauta!");
-			return ResponseEntity.badRequest().body(response);
-		}
+		List<PautaDTO> listaDtos = new ArrayList();
+		
+		pautaService.consultarPauta(pauta.getNome()).forEach(pautaRetornada -> {
+			listaDtos.add(converterParaDTO(pautaRetornada));
+		});
+		
+		response.setData(listaDtos);		
 		
 		return ResponseEntity.ok(response);
 		
 	}
 	
 	@PutMapping(value = "v1/abrir")
-	public ResponseEntity<Response<PautaDRO>> abrirSessao(@RequestParam Long pId){
+	public ResponseEntity<String> abrirSessao(@RequestParam(required = true, value = "id") Long pId, @RequestParam(required = true, value = "minutos", defaultValue = "1") Long pTempo){
 		
+		pautaService.aberturaSessao(pId, pTempo);
+		
+		
+		return ResponseEntity.ok("Data atualizada com sucesso!");
 	}
+	
+	
 	
 	public PautaDTO converterParaDTO(PautaEntity pauta) {
 		
@@ -74,7 +79,7 @@ public class PautaController {
 		
 		output.setId(pauta.getId() != null ? pauta.getId() : null);
 		output.setNome(pauta.getNome() != null ? pauta.getNome() : null);
-		output.setDataFim(pauta.getDataFim() != null ? pauta.getDataFim().toString() : null);
+		output.setDataFim(pauta.getDataFim() != null ? pauta.getDataFim().toString(): null);
 		
 		return output;
 	}
