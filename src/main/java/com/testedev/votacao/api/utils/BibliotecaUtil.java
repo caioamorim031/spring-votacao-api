@@ -78,7 +78,7 @@ public class BibliotecaUtil {
 	 */
 	public static boolean contemNumeroOuEspeciais(String pValor) {
 		
-		Pattern pattern = Pattern.compile("^[a-zA-Z]+(\s*[a-zA-Z])+$");
+		Pattern pattern = Pattern.compile("^[a-zA-Z]+(\\s*[a-zA-Z])+$");
 		
 		return !pattern.matcher(pValor).find();
 		

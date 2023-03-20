@@ -26,3 +26,10 @@ spring.datasource.password=admin
 
 
 Após clonar o projeto no seu workspace, importar o mesmo no Spring Tool Suite como Spring Boot App
+
+
+3. Swagger
+
+
+Para visualizar a documentação do projeto, após subir a API, acesse a url localhost:porta/swagger-ui/
+
